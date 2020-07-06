@@ -33,8 +33,8 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
         }
 
         override val compileInstructions = """
-            Compile: g++ --std=c++11 SDQR.cpp -o SDQR-c++
-            Run: ./SDQR-c++
+            $compileStr g++ --std=c++11 SDQR.cpp -o SDQR-c++
+            $runStr ./SDQR-c++
         """.trimIndent()
     },
     Cs("C#","SDQR.cs") {
@@ -56,8 +56,8 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
             """.standardMinimize()
         }
         override val compileInstructions = """
-            Compile: mcs -out:SDQR-C#.exe SDQR.cs main.cs
-            Run: mono SDQR-C#.exe
+            $compileStr mcs -out:SDQR-C#.exe SDQR.cs main.cs
+            $runStr mono SDQR-C#.exe
         """.trimIndent()
     };
 
@@ -65,6 +65,20 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
     abstract val compileInstructions: String
 
     companion object { // static methods
+        val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
+
+        fun testColors() = langNames.forEach {
+            println(
+                "Light: ${it.colorByLangName(TextStyle.LIGHT)} Strong: ${it.colorByLangName(TextStyle.STRONG)} Stronger: ${it.colorByLangName(
+                    TextStyle.STRONGER
+                )} "
+            )
+        }
+
+        fun testOutputs() = langNames.forEach {
+            println(getOutputForLanguage(it))
+        }
+
         /**
          * Test the sanitizing capabilities of all the language templates.
          */

@@ -21,6 +21,7 @@ dependencies {
     listOf("runner-junit5", "assertions-core", "runner-console"/*, "property"*/).forEach {
         testImplementation("io.kotest:kotest-$it-jvm:$kotestVersion")
     }
+    implementation("com.github.ajalt:mordant:1.2.1")
 }
 
 tasks.withType<Test> { useJUnitPlatform() }

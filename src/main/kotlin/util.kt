@@ -1,3 +1,16 @@
+import com.github.ajalt.mordant.TermColors
+import kotlin.math.floor
+
+
+/**
+ * Utility constants
+ * Formatted strings for use in each language's compile insturctions
+ */
+val termColors = TermColors(TermColors.Level.ANSI256)
+val boldYellow = (termColors.bold + termColors.brightYellow)
+val compileStr = boldYellow("[Compile]")
+val runStr = boldYellow("[Run]")
+
 /**
  * Given a list of lines, removes leading whitespace from every line
  */
@@ -71,11 +84,35 @@ fun getOutputForLanguage(langName: String): String {
     val prevLangName = getLangNameByIndex(thisLangIndex - 1)
 
     return """
-        ... -> [$langName] -> $nextLangName -> ... -> $prevLangName -> $langName -> ...
-        Current language: $langName. Next language: $nextLangName.
+        [Self-Documenting Quine Relay] ${termColors.gray("~")} ${termColors.dim("jmoore34.github.io")}
+        ... -> ${"[$langName]".colorByLangName(TextStyle.STRONGER)} -> ${nextLangName.colorByLangName(TextStyle.STRONG)} -> ... -> ${prevLangName.colorByLangName(TextStyle.STRONG)} -> ${langName.colorByLangName(TextStyle.STRONG)} -> ...
+        Current language: ${langName.colorByLangName()}. Next language: ${nextLangName.colorByLangName()}.
         Wrote ${getFileNameForLanguage(nextLangName)} to current directory.
         ${getCompileInstructionsForLanguage(nextLangName)}
     """.removeMargin()
+            // add in some more colors
+        .replace("...", termColors.gray("..."))
+        .replace("->", termColors.dim("->"))
+}
+
+enum class TextStyle {LIGHT, STRONG, STRONGER}
+
+/**
+ * Given a string containing a language name, colors it using ANSI escape codes
+ * Each language has a corresponding color related to its order in the sequence
+ */
+fun String.colorByLangName(style: TextStyle = TextStyle.LIGHT): String {
+    // a list of all the language names in the relay
+    val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
+
+    val index = langNames.indexOfFirst { this.contains(it) } // get the index of the language name contained in this string
+    val percentage = 1.0 * index / (langNames.size)
+    val hue = (percentage * 360).toInt()
+    val saturation = 100
+    val lightness = if (style == TextStyle.LIGHT) 94 else 80
+
+    val base = termColors.hsl(hue, saturation, lightness)(this)
+    return if (style == TextStyle.STRONGER) termColors.bold(base) else base
 }
 
 /**

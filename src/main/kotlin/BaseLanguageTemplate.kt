@@ -1,9 +1,10 @@
+
 object BaseLanguageTemplate {
     val langName = "Python"
     val PAYLOAD_PLACEHOLDER = "_RWP"
     val fileName = "SDQR.py"
     val compileInstructions = """
-        Run: python3 SDQR.py
+        $runStr python3 SDQR.py
     """.trimIndent()
 
     fun createQuineProgram(fileContent: String, printOutput: String): String {
