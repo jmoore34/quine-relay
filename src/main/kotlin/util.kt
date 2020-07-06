@@ -13,15 +13,19 @@ val boldWhite = (termColors.bold + white)
 val compileStr = boldYellow("[Compile]")
 val runStr = boldYellow("[Run]")
 
+
+// a list of all the language names in the relay
+val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
+
 /**
  * Given a list of lines, removes leading whitespace from every line
  */
-public fun List<String>.removeMargin() = this.map { it.trimStart() }
+fun List<String>.removeMargin() = this.map { it.trimStart() }
 
 /**
  * Like above, but works on a single multiline string
  */
-public fun String.removeMargin() = this.lines().removeMargin().joinToString("\n")
+fun String.removeMargin() = this.lines().removeMargin().joinToString("\n")
 
 /**
  * Given a list of lines,
@@ -61,6 +65,11 @@ fun getCompileInstructionsForLanguage(langName: String): String {
         SimpleWriterLanguageTemplate.values().first { it.langName == langName }.compileInstructions
 }
 
+fun printAllCompileInstructions() = langNames.forEach {
+    println(getCompileInstructionsForLanguage(it))
+    println("---------------")
+}
+
 /**
  * Given a language by name, return the corresponding language template's file name
  * Supports both the simple language templates in the LanguageTemplate enum as well as the base language
@@ -77,8 +86,6 @@ fun getFileNameForLanguage(langName: String): String {
  * This contains info about the current position in the relay as well as compilation instructions for the next program
  */
 fun getOutputForLanguage(langName: String): String {
-    // a list of all the language names in the relay
-    val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
 
     fun getLangNameByIndex(i: Int): String = langNames[(i + langNames.size) % langNames.size]
     val thisLangIndex = langNames.indexOf(langName)
@@ -104,9 +111,6 @@ enum class TextStyle {LIGHT, STRONG, STRONGER}
  * Each language has a corresponding color related to its order in the sequence
  */
 fun String.colorByLangName(style: TextStyle = TextStyle.STRONG): String {
-    // a list of all the language names in the relay
-    val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
-
     val index = langNames.indexOfFirst { this.contains(it) } // get the index of the language name contained in this string
     val percentage = 1.0 * index / (langNames.size)
     val hue = (percentage * 360).toInt()

@@ -85,6 +85,7 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
          */
         fun testOutputs() = langNames.forEach {
             println(getOutputForLanguage(it))
+            println("---------------")
         }
 
         /**
@@ -92,31 +93,24 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
          */
         fun testAll() {
             val testContent = """
-                print("\n").substr("\"\"")
-                \n\n\n 😊 \"\"\" @"" ${"\"\"\""}
-                ${"\t"}<- \t
+                ${"""print("\n").substr("\"\"")""".rainbowize()}
+                ${boldWhite("""\n\n\n 😊 \"\"\" @"" ${"\"\"\""}""")}
+                ${termColors.underline("""${"\t"}<- \t""")}
              """.trimIndent()
 
             val nextFileName = "nextFile.txt"
 
-            val testMsg = """
-                ... -> [lang1] -> lang2 -> ... -> lang1
-                compile & run instructions
-            """.trimIndent()
 
             println(
                 """
                 --- Expected file output (to $nextFileName): ---
                 $testContent
-                
-                --- Expected console output: ---
-                $testMsg
             """.removeMargin()
             )
 
             SimpleWriterLanguageTemplate.values().forEach {
                 val file = File(it.fileName)
-                file.writeText(it.createWriterProgram(testContent, nextFileName, testMsg))
+                file.writeText(it.createWriterProgram(testContent, nextFileName, getOutputForLanguage(it.langName)))
                 println("Wrote ${file.absolutePath} to disk.")
             }
         }
