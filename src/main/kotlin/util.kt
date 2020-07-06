@@ -85,9 +85,9 @@ fun getOutputForLanguage(langName: String): String {
 
     return """
         [Self-Documenting Quine Relay] ${termColors.gray("~")} ${termColors.dim("jmoore34.github.io")}
-        ... -> ${"[$langName]".colorByLangName(TextStyle.STRONGER)} -> ${nextLangName.colorByLangName(TextStyle.STRONG)} -> ... -> ${prevLangName.colorByLangName(TextStyle.STRONG)} -> ${langName.colorByLangName(TextStyle.STRONG)} -> ...
+        ... -> ${"[$langName]".colorByLangName(TextStyle.STRONGER)} -> ${nextLangName.colorByLangName()} -> ... -> ${prevLangName.colorByLangName()} -> ${langName.colorByLangName()} -> ...
         Current language: ${langName.colorByLangName()}. Next language: ${nextLangName.colorByLangName()}.
-        Wrote ${getFileNameForLanguage(nextLangName)} to current directory.
+        Wrote ${termColors.bold(getFileNameForLanguage(nextLangName))} to current directory.
         ${getCompileInstructionsForLanguage(nextLangName)}
     """.removeMargin()
             // add in some more colors
@@ -101,7 +101,7 @@ enum class TextStyle {LIGHT, STRONG, STRONGER}
  * Given a string containing a language name, colors it using ANSI escape codes
  * Each language has a corresponding color related to its order in the sequence
  */
-fun String.colorByLangName(style: TextStyle = TextStyle.LIGHT): String {
+fun String.colorByLangName(style: TextStyle = TextStyle.STRONG): String {
     // a list of all the language names in the relay
     val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
 
