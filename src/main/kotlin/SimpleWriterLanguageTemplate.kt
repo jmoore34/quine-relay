@@ -67,6 +67,10 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
     companion object { // static methods
         val langNames = listOf(BaseLanguageTemplate.langName) + (SimpleWriterLanguageTemplate.values().map { it.langName })
 
+        /**
+         * Print the associated colors of each language
+         * Used for testing
+         */
         fun testColors() = langNames.forEach {
             println(
                 "Light: ${it.colorByLangName(TextStyle.LIGHT)} Strong: ${it.colorByLangName(TextStyle.STRONG)} Stronger: ${it.colorByLangName(
@@ -75,6 +79,10 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
             )
         }
 
+        /**
+         * Print the output for each language template
+         * Used for testing
+         */
         fun testOutputs() = langNames.forEach {
             println(getOutputForLanguage(it))
         }

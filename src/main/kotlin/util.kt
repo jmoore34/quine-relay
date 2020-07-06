@@ -8,6 +8,8 @@ import kotlin.math.floor
  */
 val termColors = TermColors(TermColors.Level.ANSI256)
 val boldYellow = (termColors.bold + termColors.brightYellow)
+val white = termColors.rgb(255,255,255)
+val boldWhite = (termColors.bold + white)
 val compileStr = boldYellow("[Compile]")
 val runStr = boldYellow("[Run]")
 
@@ -84,10 +86,10 @@ fun getOutputForLanguage(langName: String): String {
     val prevLangName = getLangNameByIndex(thisLangIndex - 1)
 
     return """
-        [Self-Documenting Quine Relay] ${termColors.gray("~")} ${termColors.dim("jmoore34.github.io")}
+        ${boldWhite("[Self-Documenting Quine Relay]")} ${termColors.gray("~")} ${"jmoore34.github.io".rainbowize()}
         ... -> ${"[$langName]".colorByLangName(TextStyle.STRONGER)} -> ${nextLangName.colorByLangName()} -> ... -> ${prevLangName.colorByLangName()} -> ${langName.colorByLangName()} -> ...
         Current language: ${langName.colorByLangName()}. Next language: ${nextLangName.colorByLangName()}.
-        Wrote ${termColors.bold(getFileNameForLanguage(nextLangName))} to current directory.
+        Wrote ${white(getFileNameForLanguage(nextLangName))} to current directory.
         ${getCompileInstructionsForLanguage(nextLangName)}
     """.removeMargin()
             // add in some more colors
@@ -114,6 +116,15 @@ fun String.colorByLangName(style: TextStyle = TextStyle.STRONG): String {
     val base = termColors.hsl(hue, saturation, lightness)(this)
     return if (style == TextStyle.STRONGER) termColors.bold(base) else base
 }
+
+
+fun String.rainbowize(): String = this.mapIndexed { index, char ->
+    val percentage = 1.0 * index / this.length
+    val hue = (360 * percentage).toInt()
+    val saturation = 100
+    val lightness = 92
+    termColors.hsl(hue, saturation, lightness)("$char")
+}.joinToString("")
 
 /**
  * Given a string, turn every character into an hex escape sequence
