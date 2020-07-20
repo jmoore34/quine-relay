@@ -38,11 +38,11 @@ fun List<String>.removeBlankAndCommentedLines() = this.filter {
 
 /**
  * Given a list of lines, return a condensed string with as many newlines removed as possible. Specifically,
- * join lines that end in one of [';','{','}']
+ * join lines that end in one of [';','{','}',')']
  * Recommended to call removeMargin and removeBlankAndCommentedLines first
  */
 fun List<String>.toCondensedString() = this.reduce { acc, line ->
-    if (acc.endsWith(";") || acc.endsWith("{") || acc.endsWith("}"))
+    if (acc.endsWith(";") || acc.endsWith("{") || acc.endsWith("}") || acc.endsWith(')'))
         "$acc $line" else "$acc\n$line"
 }
 
@@ -111,7 +111,8 @@ enum class TextStyle {LIGHT, STRONG, STRONGER}
  * Each language has a corresponding color related to its order in the sequence
  */
 fun String.colorByLangName(style: TextStyle = TextStyle.STRONG): String {
-    val index = langNames.indexOfFirst { this.contains(it) } // get the index of the language name contained in this string
+    val langName = this.filter { it != '[' && it != ']' }
+    val index = langNames.indexOfFirst { it == langName }
     val percentage = 1.0 * index / (langNames.size)
     val hue = (percentage * 360).toInt()
     val saturation = 100

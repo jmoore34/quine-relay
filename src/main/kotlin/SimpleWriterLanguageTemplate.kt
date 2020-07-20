@@ -1,6 +1,66 @@
 import java.io.File
 
 enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: String) {
+    C("C", "SDQR.c") {
+        override fun createWriterProgram(fileContent: String, fileName: String, printOutput: String): String {
+            val backslashReplacement = "_bC-"
+            val newlineReplacement = "_nC-"
+            val doubleQuoteReplacement = "_qC-"
+            val sanitizedContent = fileContent.replace("\\",backslashReplacement) // replace backslash first!
+                .replace("\n",newlineReplacement)
+                .replace("\"",doubleQuoteReplacement)
+            val sanitizedOutput = printOutput.replace("\n",newlineReplacement)
+            return """
+                #include <stdio.h>
+                #include <string.h>
+                #include <stdlib.h>
+                
+                char * desanitize(const char *str) {
+                  char *output = malloc(strlen(str));
+                  char *output_current_pos = output;
+                
+                  for (char *ptr = (char*) str; *ptr != '\0'; ptr++) {
+                    // by default, the character we want to add to the output
+                    // is just the current character in the input string
+                    char output_char = *ptr;
+                
+                    // however if we encounter an escape code for this language (C)
+                    // i.e. in the format _nC- (newline), _qC- ("), or _bC- (\)
+                    // then we will override the output char
+                    if (*ptr == '_' && ptr[2] == 'C' && ptr[3] == '-') {
+                      if (ptr[1] == 'b')
+                        output_char = '\\';
+                      else if (ptr[1] == 'q')
+                        output_char = '"';
+                      else if (ptr[1] == 'n')
+                        output_char = '\n';
+                
+                      // advance the input pointer so that we ignore the rest
+                      // of the escape sequence
+                      ptr += 3;
+                    }
+                
+                    // now we just insert the output character and then increment 
+                    // the output pointer
+                    *output_current_pos++ = output_char;
+                  }
+                
+                  return output;
+                }
+                
+                int main(void) {
+                  FILE *file = fopen("$fileName", "w");
+                  fprintf(file, "%s", desanitize("$sanitizedContent"));
+                  printf("%s\n", desanitize("$sanitizedOutput"));
+                }
+            """.standardMinimize()
+        }
+
+        override val compileInstructions = """
+            $compileStr gcc SDQR.c -o SDQR-c ${boldWhite("or")} clang SDQR.c -o SDQR-c
+            $runStr ./SDQR-c
+        """.trimIndent()
+    },
     Cpp("C++","SDQR.cpp") {
         override fun createWriterProgram(fileContent: String, fileName: String, printOutput: String): String {
             val backslashReplacement = "_bCP"
@@ -26,7 +86,7 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
                   outfile.open("$fileName");
                   outfile << desanitize("$sanitizedContent");
                   outfile.close();
-                  std::cout << desanitize("$sanitizedOutput");
+                  std::cout << desanitize("$sanitizedOutput") << std::endl;
                 }
             """.standardMinimize()
 
@@ -50,13 +110,13 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
                 class MainClass {
                     static void Main(string[] args) {
                         System.IO.File.WriteAllText("$fileName", "$sanitizedContent".Replace("$doubleQuoteReplacement", "\"").Replace("$newlineReplacement","\n").Replace("$backslashReplacement","\\"));
-                        System.Console.Write("$sanitizedOutput".Replace("$newlineReplacement","\n"));
+                        System.Console.Write("$sanitizedOutput".Replace("$newlineReplacement","\n") + "\n");
                     }
                 }
             """.standardMinimize()
         }
         override val compileInstructions = """
-            $compileStr mcs -out:SDQR-C#.exe SDQR.cs main.cs
+            $compileStr mcs -out:SDQR-C#.exe SDQR.cs
             $runStr mono SDQR-C#.exe
         """.trimIndent()
     };
