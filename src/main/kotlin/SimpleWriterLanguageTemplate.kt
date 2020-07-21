@@ -57,7 +57,7 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
         }
 
         override val compileInstructions = """
-            $compileStr gcc SDQR.c -o SDQR-c ${boldWhite("or")} clang SDQR.c -o SDQR-c
+            $compileStr gcc SDQR.c -o SDQR-c
             $runStr ./SDQR-c
         """.trimIndent()
     },
