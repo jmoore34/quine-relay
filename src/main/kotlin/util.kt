@@ -10,6 +10,7 @@ val termColors = TermColors(TermColors.Level.ANSI256)
 val boldYellow = (termColors.bold + termColors.brightYellow)
 val white = termColors.rgb(255,255,255)
 val boldWhite = (termColors.bold + white)
+val packageStr = boldYellow("[Package]")
 val compileStr = boldYellow("[Compile]")
 val runStr = boldYellow("[Run]")
 
@@ -29,20 +30,22 @@ fun String.removeMargin() = this.lines().removeMargin().joinToString("\n")
 
 /**
  * Given a list of lines,
- * removes blank lines and lines starting directly with a // or ## (i.e. w/ no leading whitespace)
+ * removes blank lines and lines starting directly with a // or ## or ; (i.e. w/ no leading whitespace)
+ * (## instead of # used to allow for hashbangs)
  * Recommended to call removeMargin() first
  */
 fun List<String>.removeBlankAndCommentedLines() = this.filter {
-    !(it.startsWith("//") || it.startsWith("##") || it.isEmpty())
+    !(it.startsWith("//") || it.startsWith("##") || it.startsWith(";") || it.isEmpty())
 }
 
 /**
  * Given a list of lines, return a condensed string with as many newlines removed as possible. Specifically,
  * join lines that end in one of [';','{','}',')']
+ * Alternatively, if 'aggressive' is specified, all lines will be joined no matter what they end with
  * Recommended to call removeMargin and removeBlankAndCommentedLines first
  */
-fun List<String>.toCondensedString() = this.reduce { acc, line ->
-    if (acc.endsWith(";") || acc.endsWith("{") || acc.endsWith("}") || acc.endsWith(')'))
+fun List<String>.toCondensedString(aggressive: Boolean = false) = this.reduce { acc, line ->
+    if (acc.endsWith(";") || acc.endsWith("{") || acc.endsWith("}") || acc.endsWith(')') || aggressive)
         "$acc $line" else "$acc\n$line"
 }
 
@@ -51,8 +54,9 @@ fun List<String>.toCondensedString() = this.reduce { acc, line ->
  * - Remove margins
  * - Remove blank and commented out lines
  * - Remove unneeded line breaks (e.g. after semicolons)
+ * If 'aggressive' is specified, all line breaks will be removed
  */
-fun String.standardMinimize() = this.lines().removeMargin().removeBlankAndCommentedLines().toCondensedString()
+fun String.standardMinimize(aggressive: Boolean = false) = this.lines().removeMargin().removeBlankAndCommentedLines().toCondensedString(aggressive)
 
 /**
  * Given a language by name, return its compile instructions

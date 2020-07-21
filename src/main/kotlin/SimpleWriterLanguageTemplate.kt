@@ -116,8 +116,51 @@ enum class SimpleWriterLanguageTemplate(val langName: String, val fileName: Stri
             """.standardMinimize()
         }
         override val compileInstructions = """
+            $packageStr sudo apt install mono-mcs
             $compileStr mcs -out:SDQR-C#.exe SDQR.cs
             $runStr mono SDQR-C#.exe
+        """.trimIndent()
+    },
+    Lisp("Lisp", "SDQR.lisp") {
+        override fun createWriterProgram(fileContent: String, fileName: String, printOutput: String): String {
+            val backslashReplacement = "_bL"
+            val newlineReplacement = "_nL"
+            val doubleQuoteReplacement = "_qL"
+            val sanitizedContent = fileContent.replace("\\",backslashReplacement) // replace backslash first!
+                .replace("\n",newlineReplacement)
+                .replace("\"",doubleQuoteReplacement)
+            val sanitizedOutput = printOutput.replace("\n",newlineReplacement) + newlineReplacement
+            return """
+                ; gnu clisp  2.49.60
+                
+                ; modified replace-all from http://cl-cookbook.sourceforge.net/strings.html
+                (defun replace-all (string part replacement-char &key (test #'char=))
+                  (with-output-to-string (out)
+                    (loop with part-length = (length part)
+                          for old-pos = 0 then (+ pos part-length)
+                          for pos = (search part string
+                                            :start2 old-pos
+                                            :test test)
+                          do (write-string string out
+                                           :start old-pos
+                                           :end (or pos (length string)))
+                          when pos do (write-char replacement-char out)
+                          while pos)))
+                
+                
+                (defun desanitize (string)
+                    (replace-all (replace-all (replace-all string "$newlineReplacement" #\linefeed) "$doubleQuoteReplacement" #\") "$backslashReplacement" #\\))
+                    
+                (with-open-file (stream "next" :direction :output
+                                               :if-exists :supersede)
+                    (format stream "~d" (desanitize "$sanitizedContent")))
+
+                (format t "~d" (desanitize "$sanitizedOutput")) 
+            """.standardMinimize(true)
+        }
+        override val compileInstructions = """
+            $packageStr sudo apt install sbcl
+            $runStr sbcl --script SDQR.lisp
         """.trimIndent()
     };
 
