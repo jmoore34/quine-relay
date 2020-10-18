@@ -18,7 +18,11 @@ This quine relay follows quine rules. That is, each of the programs in the chain
 
 Each program in the chain outputs helpful documentation about the current position in the cycle and how to compile and run the next program in the cycle.
 
-### Running it
+## Demo
+
+View a terminal recording of the quine relay [here](https://bit.ly/quinerelay).
+
+## Running it
 
 Run `python3 SDQR.py`. Each program generated will offer
 compilation instructions for the next program in the chain.
