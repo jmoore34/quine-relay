@@ -24,5 +24,10 @@ View a terminal recording of the quine relay [here](https://bit.ly/quinerelay).
 
 ## Running it
 
-Run `python3 SDQR.py`. Each program generated will offer
+Run the following in the UNIX terminal of your choice:
+```bash
+curl https://raw.githubusercontent.com/jmoore34/quine-relay/master/SDQR.py
+python3 SDQR.py
+```
+Each program generated will offer
 compilation instructions for the next program in the chain.
