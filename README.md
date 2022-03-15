@@ -4,7 +4,7 @@
 
 A Python program that outputs a C program that outputs a C++ program that outputs a C# program that outputs a Lisp program that outputs the exact original Python program.
 
-![image](https://user-images.githubusercontent.com/1783464/158307466-61222fa7-7e29-409d-a73a-8f61ca26226b.png)
+![Flowchart](https://user-images.githubusercontent.com/1783464/158309575-ff9f9360-1959-4407-8f4a-390862b50711.png)
 
 ### Quine Rules
 
