@@ -2,9 +2,9 @@
 
 ## What is it?
 
-A Python program that outputs a C program that outputs a C++ program (through several more languages) that outputs a Lisp program that outputs the original Python program.
+A Python program that outputs a C program that outputs a C++ program that outputs a C# program that outputs a Lisp program that outputs the exact original Python program.
 
-Full list: Python, C, C++, C#, Lisp
+![image](https://user-images.githubusercontent.com/1783464/158307466-61222fa7-7e29-409d-a73a-8f61ca26226b.png)
 
 ### Quine Rules
 
@@ -21,6 +21,8 @@ Each program in the chain outputs helpful documentation about the current positi
 ## Demo
 
 View a terminal recording of the quine relay [here](https://bit.ly/quinerelay).
+
+[![asciicast](https://asciinema.org/a/361022.svg)](https://asciinema.org/a/361022)
 
 ## Running it
 
