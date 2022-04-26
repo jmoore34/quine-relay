@@ -1,5 +1,8 @@
 # Self Documenting Quine Relay
 
+[![Build Status](https://img.shields.io/github/stars/jmoore34/quine-relay.svg)](https://github.com/jmoore34/quine-relay)
+[![Activity](https://img.shields.io/github/last-commit/jmoore34/quine-relay.svg)](https://github.com/jmoore34/quine-relay/commits)
+
 ## What is it?
 
 A Python program that outputs a C program that outputs a C++ program that outputs a C# program that outputs a Lisp program that outputs the exact original Python program.
